@@ -38,6 +38,7 @@ ciop-log "DEBUG" "`tree $TMPDIR`"
   b5="`find $OUTPUTDIR -name "proj_*B5*.TIF"`"
   b6="`find $OUTPUTDIR -name "proj_*B6*.TIF"`"
 
+  ciop-log "INFO" "$b4 $b5 $b6"
   gdal_calc.py -b1 $b4 -b2 $b5 --outfile=$NDVIDIR/ndvi.tif --calc="(b1-b2)/(b1+b2)"
   gdal_calc.py -b1 $b5 -b1 $b6 --outfile=$NDVIDIR/ndbi.tif --calc="(b1-b2)/(b1+b2)"
 

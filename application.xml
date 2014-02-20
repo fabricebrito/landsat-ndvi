@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application id="landsat_warp">
+<jobTemplates>
+<jobTemplate id="gwarp">
+<streamingExecutable>/application/gwarp/run.sh</streamingExecutable>
+<defaultParameters>
+<parameter id="tsrs" scope="runtime" title="Target EPSG" abstract="This defines the target EPSG for gdalwarp">EPSG:4326</parameter>
+</defaultParameters>
+<defaultJobconf>
+<property id="mapred.task.timeout">99000000000</property>
+</defaultJobconf>
+</jobTemplate>
+<jobTemplate id="mosaic">
+<streamingExecutable>/application/mosaic/run.sh</streamingExecutable>
+<defaultParameters>
+</defaultParameters>
+<defaultJobconf>
+<property id="mapred.task.timeout">99000000000</property>
+<property id="ciop.job.max.tasks">1</property>
+</defaultJobconf>
+</jobTemplate>
+</jobTemplates>
+<workflow id="landsat_warp" title="Warp Landsat demo products" abstract="This service warps Landsat demo products">
+<workflowVersion>1.0</workflowVersion>
+<node id="node_gwarp">
+<job id="gwarp"></job>
+<sources>
+<source id="url" title="URL to Landsat product" abstract="ULR(s) to Landsat products" refid="string:list" scope="runtime">s3://sensyf-service-6/LC82040332013235LGN00.tgz</source>
+</sources>
+<parameters>
+</parameters>
+</node>
+<node id="node_mosaic">
+<job id="mosaic"></job>
+<sources>
+<source refid="wf:node">node_gwarp</source>
+</sources>
+<parameters>
+</parameters>
+</node>
+</workflow>
+</application>

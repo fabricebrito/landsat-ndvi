@@ -5,11 +5,9 @@ source ${ciop_job_include}
 tsrs="`ciop-getparam tsrs`"
 
 INPUTDIR=$TMPDIR/input
-PROJDIR=$TMPDIR/proj
-CROPDIR=$TMPDIR/crop
-NDVIDIR=$TMPDIR/ndvi
+OUTPUTDIR=$TMPDIR/output
 
-mkdir -p $INPUTDIR $PROJDIR $CROPDIR $NDVIDIR
+mkdir -p $INPUTDIR $OUTPUTDIR 
 
 while read product
 do
@@ -29,7 +27,7 @@ do
 
   for tif in `ls $INPUTDIR/*.TIF`
   do
-    gdalwarp  -t_srs $tsrs $tif $PROJDIR/proj_`basename $tif` 1>&2
+    gdalwarp  -t_srs $tsrs $tif $OUTPUTDIR/proj_`basename $tif` 1>&2
   done
 
 ciop-log "DEBUG" "`tree $TMPDIR`"
@@ -38,14 +36,16 @@ ciop-log "DEBUG" "`tree $TMPDIR`"
   b5="`find $OUTPUTDIR -name "proj_*B5*.TIF"`"
   b6="`find $OUTPUTDIR -name "proj_*B6*.TIF"`"
 
+  formula="(A-B)/(A+B)"
+
   ciop-log "INFO" "new branch is cool: $b4 $b5 $b6"
-  gdal_calc.py -b1 $b4 -b2 $b5 --outfile=$NDVIDIR/ndvi.tif --calc="(b1-b2)/(b1+b2)"
-  gdal_calc.py -b1 $b5 -b1 $b6 --outfile=$NDVIDIR/ndbi.tif --calc="(b1-b2)/(b1+b2)"
+  gdal_calc.py -A $b4 -B $b5 --outfile=$NDVIDIR/ndvi.tif --calc=$formula
+  gdal_calc.py -A $b5 -B $b6 --outfile=$NDVIDIR/ndbi.tif --calc=$formula
 
 
   ciop-publish -m $NDVIDIR/ndvi.tif
   ciop-publish -m $NDVIDIR/ndbi.tif
 
-  rm -fr $OUTPUTDIR/* $INPUTDIR/* #$TMPDIR/output.vrt $TMPDIR/output.tiff $TMPDIR/*.jpeg
+  rm -fr $OUTPUTDIR/* $INPUTDIR/* 
 done
 

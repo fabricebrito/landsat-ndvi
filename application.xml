@@ -20,7 +20,7 @@
 </defaultJobconf>
 </jobTemplate>
 </jobTemplates>
-<workflow id="landsat_warp" title="Warp Landsat demo products" abstract="This service warps Landsat demo products">
+<workflow id="landsat_warp" title="Warp Landsat demo product" abstract="This service warps Landsat demo products">
 <workflowVersion>1.0</workflowVersion>
 <node id="node_gwarp">
 <job id="gwarp"></job>
